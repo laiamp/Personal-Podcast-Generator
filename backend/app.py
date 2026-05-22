@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from pathlib import Path
 import os
 
 load_dotenv()
@@ -11,6 +12,7 @@ from routes import sources as sources_router
 import db
 
 app = FastAPI(title="Personal Podcast Generator - Backend")
+BASE_DIR = Path(__file__).resolve().parent
 
 app.add_middleware(
     CORSMiddleware,
@@ -40,6 +42,7 @@ async def health():
 
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/audio", StaticFiles(directory=str(BASE_DIR / "static" / "audio")), name="audio")
 
 app.include_router(sources_router.router)
 app.include_router(podcasts_router.router)

@@ -42,23 +42,42 @@
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
-  function togglePlayback() {
+  async function togglePlayback() {
     if (!audioElement) return;
 
     if (isPaused) {
-      audioElement
-        .play()
-        .then(() => {
-          statusMessage = 'Playing briefing.';
-        })
-        .catch(() => {
-          errorMessage = 'Playback is blocked. Use the browser controls if needed.';
-        });
+      try {
+        await audioElement.play();
+      } catch (error) {
+        const mediaError = audioElement.error;
+        const message = error instanceof Error ? error.message : String(error || '');
+
+        errorMessage = mediaError
+          ? `Audio failed to load or play (code ${mediaError.code}).`
+          : message || 'Audio failed to load or play.';
+      }
       return;
     }
 
     audioElement.pause();
     statusMessage = 'Paused.';
+  }
+
+  function handleAudioPlay() {
+    isPaused = false;
+    statusMessage = 'Playing briefing.';
+    errorMessage = '';
+  }
+
+  function handleAudioPause() {
+    isPaused = true;
+  }
+
+  function handleAudioError() {
+    const mediaError = audioElement?.error;
+    errorMessage = mediaError
+      ? `Audio failed to load or play (code ${mediaError.code}).`
+      : 'Audio failed to load or play.';
   }
 
   function rewind() {
@@ -124,10 +143,20 @@
 
           <div class="mt-6 flex flex-wrap items-center gap-3">
             <button
-              class="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-slate-100"
+              class="brief-play-button"
               on:click={togglePlayback}
+              aria-label={isPaused ? 'Play briefing' : 'Pause briefing'}
+              title={isPaused ? 'Play briefing' : 'Pause briefing'}
             >
-              {isPaused ? 'Play briefing' : 'Pause briefing'}
+              {#if isPaused}
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M5 3v18l15-9z" />
+                </svg>
+              {:else}
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+              {/if}
             </button>
 
             <button
@@ -160,6 +189,11 @@
             bind:duration={duration}
             src={episode.audioUrl}
             preload="metadata"
+            controls
+            controlsList="nodownload"
+            on:play={handleAudioPlay}
+            on:pause={handleAudioPause}
+            on:error={handleAudioError}
             on:ended={() => {
               isPaused = true;
               statusMessage = 'Briefing finished.';
@@ -169,6 +203,10 @@
           <p class="mt-4 text-sm leading-6 {errorMessage ? 'text-rose-300' : 'text-slate-300'}">
             {errorMessage || 'Use the transport controls or let the generated briefing play out.'}
           </p>
+
+          <div class="mt-3">
+            <a class="text-sm text-slate-400 hover:text-slate-700" href={episode.audioUrl} target="_blank" rel="noopener noreferrer">Open audio file in new tab</a>
+          </div>
         </div>
       </div>
 
@@ -200,7 +238,31 @@
         >
           team metrics
         </button>
-      </aside>
+              class="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
     </div>
   </div>
 </section>
+
+<style>
+  .brief-play-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 44px;
+    border-radius: 10px;
+    background: #eef2ff; /* similar to history button */
+    color: #4f46e5;
+    border: none;
+    box-shadow: 0 1px 2px rgba(15,23,42,0.04);
+    cursor: pointer;
+    transition: transform .12s ease, background .12s ease;
+  }
+
+  .brief-play-button:hover {
+    transform: translateY(-2px);
+    background: #e0e7ff;
+  }
+
+  .brief-play-button svg { width: 20px; height: 20px; }
+</style>

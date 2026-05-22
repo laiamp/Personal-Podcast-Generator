@@ -18,7 +18,7 @@ if str(BACKEND_ROOT) not in sys.path:
 
 import db
 from scripts.run_scraper import fetch_hackernews_items
-from services.podcast_generation import build_source_snapshot
+from services.podcast_generation import TEST_AUDIO_URL, build_source_snapshot
 
 
 SEED = 42
@@ -87,7 +87,13 @@ def build_users() -> list[dict[str, Any]]:
 
 
 async def build_sources() -> list[dict[str, Any]]:
-    return await fetch_hackernews_items("AI")
+    queries = ["Trump", "Andrej Karpathy", "Prosper AI", "OpenClaw"]
+    
+    tasks = [fetch_hackernews_items(query) for query in queries]
+    results = await asyncio.gather(*tasks)
+    flattened_sources = [item for sublist in results for item in sublist]
+    
+    return flattened_sources
 
 
 def build_podcasts(users: list[dict[str, Any]], sources: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -108,7 +114,7 @@ def build_podcasts(users: list[dict[str, Any]], sources: list[dict[str, Any]]) -
         podcast = {
             "_id": ObjectId(),
             "user_id": user_cycle[index % len(user_cycle)],
-            "audio_url": f"/static/audio/podcast_seed_{index + 1}.mp3",
+            "audio_url": TEST_AUDIO_URL,
             "duration_seconds": total_seconds,
             "created_at": created_at,
             "source_snapshots": [build_source_snapshot(source) for source in selected_sources],

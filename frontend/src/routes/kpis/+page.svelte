@@ -42,6 +42,64 @@
     'Startup shipping notes',
     'Model release context',
   ];
+
+  import TimeHeatmap from '$lib/components/TimeHeatmap.svelte';
+  import Demographics from '$lib/components/Demographics.svelte';
+  import MonthlyUsersLineChart from '$lib/components/MonthlyUsersLineChart.svelte';
+
+  const heatmapHours = Array.from({ length: 24 }, (_, i) => i); // 0..23
+
+  function generateHeatmap(hoursArr: number[]) {
+    const days = 7;
+    const hoursCount = hoursArr.length;
+    const mat = Array.from({ length: days }, () => Array.from({ length: hoursCount }, () => Math.floor(Math.random() * 20 + 5)));
+
+    const applyBand = (start: number, end: number, strength: number, dow = [0,1,2,3,4]) => {
+      for (const d of dow) {
+        for (let hv = start; hv <= end; hv++) {
+          const idx = hoursArr.indexOf(hv);
+          if (idx >= 0) mat[d][idx] = Math.max(mat[d][idx], strength);
+        }
+      }
+    };
+
+    applyBand(7, 9, 92);   // morning peak (Mon-Fri)
+    applyBand(11, 13, 64); // lunch rebound
+
+    // small weekend morning boost
+    applyBand(9, 11, 50, [5,6]);
+
+    return mat;
+  }
+
+  const listeningHeatmap = generateHeatmap(heatmapHours);
+
+  // Mock demographics data
+  const demographicsGender = {
+    male: 4200,
+    female: 3200,
+    other: 180,
+    undisclosed: 400,
+  };
+
+  const demographicsAge = [
+    { label: '18-24', value: 900 },
+    { label: '25-34', value: 3600 },
+    { label: '35-44', value: 1200 },
+    { label: '45-54', value: 600 },
+    { label: '55+', value: 380 },
+  ];
+
+  const monthlyUsers = [
+    { month: 'Jan', users: 980 },
+    { month: 'Feb', users: 1120 },
+    { month: 'Mar', users: 1360 },
+    { month: 'Apr', users: 1710 },
+    { month: 'May', users: 2030 },
+    { month: 'Jun', users: 2460 },
+    { month: 'Jul', users: 2890 },
+    { month: 'Aug', users: 3320 },
+  ];
 </script>
 
 <svelte:head>
@@ -101,24 +159,6 @@
       </section>
 
       <aside class="grid gap-4">
-        <section class="rounded-[1.75rem] border border-slate-200/80 bg-slate-950 p-5 text-white shadow-[0_24px_50px_rgba(15,23,42,0.18)]">
-          <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-400">Listening Pulse</p>
-          <h2 class="mt-3 text-2xl font-semibold tracking-tight">Peak usage is concentrated in the morning.</h2>
-
-          <div class="mt-5 space-y-4">
-            {#each signalBands as band}
-              <div>
-                <div class="flex items-center justify-between gap-3 text-sm">
-                  <span class="font-medium text-white">{band.label}</span>
-                  <span class="text-slate-400">{band.value}</span>
-                </div>
-                <div class="mt-2 h-2 overflow-hidden rounded-full bg-white/10">
-                  <div class="h-full rounded-full bg-white/80" style={`width: ${band.strength}%`}></div>
-                </div>
-              </div>
-            {/each}
-          </div>
-        </section>
 
         <section class="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)]">
           <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-400">Top Signals</p>
@@ -138,5 +178,15 @@
         </section>
       </aside>
     </div>
+
+    <MonthlyUsersLineChart points={monthlyUsers} />
+
+    <section class="mt-4">
+      <TimeHeatmap data={listeningHeatmap} hours={heatmapHours} />
+
+      <div class="mt-6">
+        <Demographics gender={demographicsGender} ageBuckets={demographicsAge} />
+      </div>
+    </section>
   </section>
 </main>

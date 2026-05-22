@@ -48,7 +48,7 @@ def _build_source_document(hit: dict[str, Any]) -> dict[str, Any]:
         "location": "Hacker News",
         "event_date": event_date,
         "scraped_at": datetime.now(tz=timezone.utc),
-        "summary": content,  # Now contains the actual cleaned-up article content!
+        "summary": content,
         "category": "news",
         "source_url": external_url or hn_url,
         "source_type": "hackernews",
@@ -60,7 +60,7 @@ def _build_source_document(hit: dict[str, Any]) -> dict[str, Any]:
 
 
 def scrape_hackernews(query: str = "") -> list[dict[str, Any]]:
-    params = {"query": query, "tags": "story", "hitsPerPage": 12}
+    params = {"query": query, "tags": "story", "hitsPerPage": 3}
     response = requests.get(HN_SEARCH_URL, params=params, timeout=15)
     response.raise_for_status()
     payload = response.json()
