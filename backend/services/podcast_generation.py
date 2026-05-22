@@ -49,7 +49,6 @@ def _serialize_document(document: dict[str, Any]) -> dict[str, Any]:
 
 
 
-
 async def _load_sources(limit: int = 5, query: str | None = None) -> list[dict[str, Any]]:
     database = get_db()
     mongo_query: dict[str, Any] = {}

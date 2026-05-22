@@ -80,7 +80,7 @@
 
     <section class="rounded-[1.5rem] border border-slate-200 bg-white p-4">
       <div class="flex items-center justify-between gap-3">
-        <h3 class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-700">Commute Budget</h3>
+        <h3 class="text-sm font-semibold uppercase tracking-[0.24em] text-slate-700">Duration</h3>
         <span class="text-xs font-medium text-slate-700">{durationMins} min</span>
       </div>
 
@@ -91,7 +91,7 @@
           max={durationOptions[durationOptions.length - 1]}
           step="5"
           bind:value={durationMins}
-          aria-label="Commute Time Budget"
+          aria-label="Duration"
           class="range-slider w-full"
         />
 
@@ -123,19 +123,19 @@
       </div>
     </section>
 
-    <section class="flex flex-col rounded-[1.5rem] border border-slate-200 bg-slate-950 p-4 text-white shadow-inner shadow-slate-950/20">
+    <div class="flex flex-col gap-3 pt-2">
       <button
-        class="mt-6 inline-flex items-center justify-center rounded-2xl border border-slate-100 bg-white px-4 py-3 text-sm font-bold text-slate-950 shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-700 disabled:opacity-100"
+        class="inline-flex items-center justify-center rounded-2xl border border-slate-200 bg-slate-950 px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/70 disabled:cursor-not-allowed disabled:border-slate-300 disabled:bg-slate-300 disabled:text-slate-700 disabled:opacity-100"
         on:click={onGenerate}
         disabled={isGenerating || selectedTopics.length === 0}
       >
-        {isGenerating ? 'Generating Morning Podcast...' : 'Generate Morning Podcast'}
+        {isGenerating ? 'Generating Podcast...' : 'Generate Podcast'}
       </button>
 
-      <p class="mt-4 text-sm leading-6 {errorMessage ? 'text-rose-200' : 'text-slate-100'}">
+      <p class="text-sm leading-6 {errorMessage ? 'text-rose-600' : 'text-slate-700'}">
         {errorMessage || statusMessage}
       </p>
-    </section>
+    </div>
   </div>
 </section>
 

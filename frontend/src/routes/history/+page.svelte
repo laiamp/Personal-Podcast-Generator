@@ -186,6 +186,9 @@
         <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-500">History Portal</p>
         <p class="mt-1 text-sm text-slate-500">Browse previously generated briefings and replay them at any time.</p>
       </div>
+      <div class="header-actions">
+        <button class="ghost-button" on:click={() => goTo('generate')}>Generate</button>
+      </div>
     </div>
 
     <div class="history-layout">
@@ -251,11 +254,11 @@
 
       <div class="history-player">
           <div class="player-card">
-            <div class="player-left">
-              <div class="player-art">
+            <!-- <div class="player-left"> -->
+              <!-- <div class="player-art">
                 <div class="play-overlay">{isPaused ? '▶' : '▌▌'}</div>
-              </div>
-            </div>
+              </div> -->
+            <!-- </div> -->
 
             <div class="player-right">
               <div class="flex items-center justify-between">
@@ -268,10 +271,7 @@
                     <span class="meta-pill">{activeEpisode ? formatDuration(activeEpisode.durationMins) : '--'}</span>
                   </div>
                 </div>
-                <div class="transport-actions">
-                  <button class="transport-button" on:click={togglePlayback}>{isPaused ? 'Play' : 'Pause'}</button>
-                  <button class="ghost-button" on:click={() => goTo('generate')}>Generate</button>
-                </div>
+              
               </div>
 
               <div class="mt-4">
@@ -298,7 +298,7 @@
                 ></audio>
               </div>
 
-              <p class="status-copy">{statusMessage}</p>
+              <!-- <p class="s  tatus-copy">{statusMessage}</p> -->
             </div>
           </div>
       </div>

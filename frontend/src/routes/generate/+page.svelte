@@ -93,7 +93,7 @@
       try {
         const payload = {
           user_id: 'test-user',
-          interests_query: selectedTopics.join(', '),
+          interests_query: ['andrej karpathy joins anthropic'].join(', '),
           voice_type: voice,
           source_limit: 5,
         };

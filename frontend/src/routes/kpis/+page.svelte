@@ -43,6 +43,15 @@
     'Model release context',
   ];
 
+  const topSignalDistribution = [
+    { label: topSignals[0], value: 34, color: 'from-slate-950 to-slate-700' },
+    { label: topSignals[1], value: 28, color: 'from-emerald-500 to-teal-500' },
+    { label: topSignals[2], value: 21, color: 'from-amber-500 to-orange-500' },
+    { label: topSignals[3], value: 17, color: 'from-cyan-500 to-sky-500' },
+  ];
+
+  const topSignalTotal = topSignalDistribution.reduce((total, item) => total + item.value, 0);
+
   import TimeHeatmap from '$lib/components/TimeHeatmap.svelte';
   import Demographics from '$lib/components/Demographics.svelte';
   import MonthlyUsersLineChart from '$lib/components/MonthlyUsersLineChart.svelte';
@@ -100,6 +109,28 @@
     { month: 'Jul', users: 2890 },
     { month: 'Aug', users: 3320 },
   ];
+
+  const podcastLengthDistribution = [
+    { label: '0-5', value: 6 },
+    { label: '5-10', value: 12 },
+    { label: '10-15', value: 24 },
+    { label: '15-20', value: 31 },
+    { label: '20-25', value: 20 },
+    { label: '25-30', value: 7 },
+  ];
+
+  const completionDistribution = [
+    { label: '0-40%', value: 4 },
+    { label: '40-60%', value: 11 },
+    { label: '60-75%', value: 22 },
+    { label: '75-90%', value: 35 },
+    { label: '90-100%', value: 28 },
+  ];
+
+  const maxDistributionValue = Math.max(
+    ...podcastLengthDistribution.map((item) => item.value),
+    ...completionDistribution.map((item) => item.value)
+  );
 </script>
 
 <svelte:head>
@@ -114,30 +145,10 @@
       <div class="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div class="max-w-3xl">
           <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-500">Internal Product Success Metrics</p>
-          <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">Team Dashboard</h1>
-          <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
-            A compact view of how the podcast generator is performing in demo conditions: reach, retention, and the habits
-            that matter most for commuting listeners.
-          </p>
+          <h1 class="mt-3 text-4xl font-semibold tracking-tight text-slate-950 sm:text-5xl">KPIs Dashboard</h1>
         </div>
 
-        <div class="grid gap-3 sm:grid-cols-3 lg:max-w-2xl lg:grid-cols-3">
-          <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p class="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-slate-400">Sessions</p>
-            <strong class="mt-2 block text-2xl font-semibold text-slate-950">128</strong>
-            <p class="mt-1 text-xs text-slate-500">today</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p class="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-slate-400">Conversion</p>
-            <strong class="mt-2 block text-2xl font-semibold text-slate-950">38%</strong>
-            <p class="mt-1 text-xs text-slate-500">generate clicks</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p class="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-slate-400">Retention</p>
-            <strong class="mt-2 block text-2xl font-semibold text-slate-950">85%</strong>
-            <p class="mt-1 text-xs text-slate-500">completion rate</p>
-          </div>
-        </div>
+       
       </div>
     </header>
 
@@ -163,21 +174,85 @@
         <section class="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)]">
           <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-400">Top Signals</p>
           <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">What listeners gravitate toward</h2>
-          <div class="mt-5 flex flex-wrap gap-2">
-            {#each topSignals as signal}
-              <span class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600">{signal}</span>
+
+          <div class="mt-6 flex items-center justify-center">
+            <div
+              class="relative flex h-48 w-48 items-center justify-center rounded-full"
+              style={`background: conic-gradient(${topSignalDistribution
+                .map((item, index) => {
+                  const start = topSignalDistribution.slice(0, index).reduce((total, entry) => total + entry.value, 0);
+                  const end = start + item.value;
+                  const startPct = (start / topSignalTotal) * 100;
+                  const endPct = (end / topSignalTotal) * 100;
+                  const colors = ['#0f172a', '#10b981', '#f59e0b', '#06b6d4'];
+                  return `${colors[index]} ${startPct}%, ${colors[index]} ${endPct}%`;
+                })
+                .join(', ')})`}
+            >
+              <div class="flex h-28 w-28 flex-col items-center justify-center rounded-full bg-white shadow-inner shadow-slate-200 ring-1 ring-slate-100">
+                <strong class="text-2xl font-semibold text-slate-950">4</strong>
+                <span class="text-[0.68rem] font-medium uppercase tracking-[0.24em] text-slate-500">topics</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-5 flex flex-wrap justify-center gap-2">
+            {#each topSignalDistribution as signal}
+              <span class={`inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600`}>
+                <span class={`h-2.5 w-2.5 rounded-full bg-gradient-to-r ${signal.color}`}></span>
+                {signal.label}
+              </span>
             {/each}
           </div>
 
-          <div class="mt-6 rounded-2xl bg-slate-50 p-4">
-            <p class="text-sm leading-6 text-slate-600">
-              The dashboard is intentionally restrained so it reads as an internal demo panel, not a consumer-facing analytics
-              product.
-            </p>
-          </div>
+
         </section>
       </aside>
     </div>
+
+    <section class="grid gap-4 lg:grid-cols-2">
+      <article class="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)]">
+        <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-400">Distribution</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Average minutes per podcast</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-600">The shape shows how often episodes land in each runtime bucket.</p>
+
+        <div class="mt-6 grid h-56 grid-cols-6 items-end gap-3">
+          {#each podcastLengthDistribution as bucket}
+            <div class="flex h-full flex-col items-center gap-2">
+              <span class="text-xs font-semibold text-slate-700">{bucket.value}</span>
+              <div class="relative flex h-44 w-full items-end overflow-hidden rounded-t-2xl bg-slate-100 ring-1 ring-inset ring-slate-200">
+                <div
+                  class="w-full rounded-t-2xl bg-gradient-to-t from-slate-950 to-slate-600 shadow-[0_-8px_24px_rgba(15,23,42,0.16)]"
+                  style={`height: ${Math.max(12, (bucket.value / maxDistributionValue) * 100)}%`}
+                ></div>
+              </div>
+              <span class="text-[0.72rem] font-medium text-slate-500">{bucket.label}m</span>
+            </div>
+          {/each}
+        </div>
+      </article>
+
+      <article class="rounded-[1.75rem] border border-slate-200/80 bg-white p-5 shadow-[0_20px_50px_rgba(15,23,42,0.06)]">
+        <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-400">Distribution</p>
+        <h2 class="mt-3 text-2xl font-semibold tracking-tight text-slate-950">Average completion rate</h2>
+        <p class="mt-2 text-sm leading-6 text-slate-600">Buckets cluster toward the higher end, which suggests good listener retention.</p>
+
+        <div class="mt-6 grid h-56 grid-cols-5 items-end gap-3">
+          {#each completionDistribution as bucket}
+            <div class="flex h-full flex-col items-center gap-2">
+              <span class="text-xs font-semibold text-slate-700">{bucket.value}</span>
+              <div class="relative flex h-44 w-full items-end overflow-hidden rounded-t-2xl bg-slate-100 ring-1 ring-inset ring-slate-200">
+                <div
+                  class="w-full rounded-t-2xl bg-gradient-to-t from-emerald-600 to-teal-400 shadow-[0_-8px_24px_rgba(16,185,129,0.18)]"
+                  style={`height: ${Math.max(12, (bucket.value / maxDistributionValue) * 100)}%`}
+                ></div>
+              </div>
+              <span class="text-[0.72rem] font-medium text-slate-500">{bucket.label}</span>
+            </div>
+          {/each}
+        </div>
+      </article>
+    </section>
 
     <MonthlyUsersLineChart points={monthlyUsers} />
 

@@ -107,7 +107,7 @@
       <div class="max-w-3xl">
         <p class="text-[0.68rem] font-semibold uppercase tracking-[0.32em] text-slate-500">Generated Briefing</p>
         <h2 class="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">{episode.title}</h2>
-        <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{episode.summary}</p>
+        <!-- <p class="mt-3 max-w-2xl text-sm leading-6 text-slate-600">{episode.summary}</p> -->
       </div>
 
       <button
@@ -200,9 +200,9 @@
             }}
           ></audio>
 
-          <p class="mt-4 text-sm leading-6 {errorMessage ? 'text-rose-300' : 'text-slate-300'}">
+          <!-- <p class="mt-4 text-sm leading-6 {errorMessage ? 'text-rose-300' : 'text-slate-300'}">
             {errorMessage || 'Use the transport controls or let the generated briefing play out.'}
-          </p>
+          </p> -->
 
           <div class="mt-3">
             <a class="text-sm text-slate-400 hover:text-slate-700" href={episode.audioUrl} target="_blank" rel="noopener noreferrer">Open audio file in new tab</a>
@@ -238,7 +238,6 @@
         >
           team metrics
         </button>
-              class="rounded-2xl border border-white/10 bg-white px-4 py-3 text-sm font-medium text-white transition hover:border-white/20 hover:bg-white/10"
     </div>
   </div>
 </section>

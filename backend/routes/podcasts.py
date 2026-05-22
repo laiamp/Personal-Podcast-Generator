@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel, Field
 
-from services.podcast_generation import test_generate_podcast
+from services.podcast_generation import test_generate_podcast, generate_podcast
 from db import get_db
 
 
@@ -23,7 +23,7 @@ class PodcastGenerateRequest(BaseModel):
 @router.post("/generate")
 async def create_podcast(payload: PodcastGenerateRequest) -> dict[str, Any]:
     try:
-        result = await test_generate_podcast(
+        result = await generate_podcast(
             user_id=payload.user_id,
             interests_query=payload.interests_query,
             voice_type=payload.voice_type,
